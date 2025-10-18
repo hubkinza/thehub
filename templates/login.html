@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - The Hub</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="auth-page">
+      <!-- Authentication page header -->
+      <header class="header">
+        <div class="corner-ornament corner-top-left"></div>
+        <div class="corner-ornament corner-top-right"></div>
+        <div class="corner-ornament corner-bottom-left"></div>
+        <div class="corner-ornament corner-bottom-right"></div>
+
+        <div class="header-content">
+          <a href="/index.html" class="logo-link">
+            <div class="logo">
+              <div class="logo-icon">🔗</div>
+              <h1 class="site-title">The Hub</h1>
+            </div>
+          </a>
+
+          <nav class="nav">
+            <a href="/login.html" class="btn btn-outline">Login</a>
+            <a href="/register.html" class="btn btn-primary">Register</a>
+          </nav>
+        </div>
+      </header>
+
+      <main class="login-main">
+        <div class="login-container">
+          <div class="login-content">
+            <div class="login-header">
+              <h1 class="login-title">Login</h1>
+            </div>
+
+            <!-- Login form section -->
+            <form class="login-form" id="login-form">
+              <div class="form-group">
+                <label for="email" class="form-label">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  class="form-input"
+                  placeholder="Enter your email"
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <label for="password" class="form-label">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  name="password"
+                  class="form-input"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
+
+              <div class="form-options">
+                <div class="checkbox-group">
+                  <input
+                    type="checkbox"
+                    id="remember"
+                    name="remember"
+                    class="checkbox"
+                  />
+                  <label for="remember" class="checkbox-label"
+                    >Keep me logged in</label
+                  >
+                </div>
+                <a href="#" class="forgot-link">Forgot password?</a>
+              </div>
+
+              <button type="submit" class="login-button">Sign In</button>
+            </form>
+
+            <div class="divider">
+              <div class="divider-line"></div>
+              <span class="divider-text">or</span>
+              <div class="divider-line"></div>
+            </div>
+
+            <div class="alt-options">
+              <p class="alt-text">New to The Hub?</p>
+              <a href="/register.html" class="register-link">Create Account</a>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <div class="footer-bottom">
+        <p class="copyright">© 2025 The Hub</p>
+      </div>
+    </div>
+  </body>
+</html>
