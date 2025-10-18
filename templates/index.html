@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Hub - Discussion Blog</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <!-- Main site header -->
+      <header class="header">
+        <div class="corner-ornament corner-top-left"></div>
+        <div class="corner-ornament corner-top-right"></div>
+        <div class="corner-ornament corner-bottom-left"></div>
+        <div class="corner-ornament corner-bottom-right"></div>
+
+        <div class="header-content">
+          <div class="logo">
+            <div class="logo-icon">🔗</div>
+            <h1 class="site-title">The Hub</h1>
+          </div>
+
+          <nav class="nav">
+            <a href="/login.html" class="btn btn-outline">Login</a>
+            <a href="/register.html" class="btn btn-primary">Register</a>
+          </nav>
+        </div>
+      </header>
+
+      <!-- Hero banner section -->
+      <section class="hero">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            The Hub <br />
+            <span class="hero-subtitle">Conversations that matter</span>
+          </h1>
+
+          <p class="hero-description">
+            Share your thoughts, ask questions, and join discussions on anything
+            that inspires you.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="/login.html" class="btn btn-primary btn-large">Explore</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recent posts section -->
+      <section class="recent-section">
+        <div class="section-content">
+          <div class="section-header">
+            <h2 class="section-title">Latest Discussions</h2>
+            <p class="section-description">
+              Catch up on trending conversations and share your own ideas.
+            </p>
+          </div>
+
+          <div class="blog-grid" id="latest-posts">
+            <!-- Posts will be loaded dynamically -->
+            <p style="text-align: center; color: #666">
+              Loading latest discussions...
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer-bottom">
+        <p class="copyright">© 2025 The Hub</p>
+      </div>
+    </div>
+  </body>
+</html>
