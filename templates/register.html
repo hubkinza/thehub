@@ -107,5 +107,26 @@
         <p class="copyright">© 2025 The Hub</p>
       </div>
     </div>
+    <script src="/static/app.js"></script>
+    <script>
+      // Handle registration form
+      document
+        .getElementById("register-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const username = document.getElementById("name").value;
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const confirmPassword =
+            document.getElementById("confirm-password").value;
+
+          if (password !== confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+          }
+
+          await register(username, email, password);
+        });
+    </script>
   </body>
 </html>
