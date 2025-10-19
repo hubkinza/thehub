@@ -1518,3 +1518,160 @@ body {
 .action-text {
   font-weight: 500;
 }
+* RESPONSIVE DESIGN */ @media (max-width: 1024px) {
+  .main-content {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .sidebar {
+    flex: 0 0 auto;
+  }
+
+  .sidebar-content {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .discussion-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .discussion-footer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .pagination-controls {
+    flex-wrap: wrap;
+  }
+
+  .page-numbers {
+    order: 1;
+    width: 100%;
+    justify-content: center;
+    margin: 12px 0;
+  }
+
+  .editor-container {
+    padding: 24px;
+    margin: 0 16px;
+  }
+
+  .editor-title {
+    font-size: 24px;
+  }
+
+  .editor-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .editor-actions .btn {
+    width: 100%;
+  }
+
+  .post-title-input {
+    font-size: 18px;
+    padding: 14px;
+  }
+
+  .post-body-input {
+    padding: 16px;
+    min-height: 250px;
+  }
+
+  .post-main-content {
+    padding: 0 16px;
+  }
+
+  .discussion-article {
+    padding: 24px;
+  }
+
+  .discussion-article .discussion-title {
+    font-size: 28px;
+  }
+
+  .discussion-article .discussion-meta {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .comments-section {
+    padding: 24px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .action-button {
+    width: 200px;
+  }
+
+  .comment-form .form-group {
+    flex-direction: column;
+  }
+
+  .user-avatar {
+    align-self: flex-start;
+  }
+
+  .form-actions {
+    justify-content: stretch;
+  }
+
+  .form-actions .btn {
+    flex: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 20px 0;
+  }
+
+  .content-title {
+    font-size: 24px;
+  }
+
+  .discussion-card {
+    padding: 16px;
+  }
+
+  .editor-main {
+    padding: 20px 0;
+  }
+
+  .editor-container {
+    padding: 20px;
+    border-radius: 12px;
+  }
+
+  .editor-header {
+    margin-bottom: 24px;
+  }
+
+  .discussion-article .discussion-title {
+    font-size: 24px;
+  }
+
+  .discussion-content {
+    font-size: 16px;
+  }
+
+  .comments-title {
+    font-size: 20px;
+  }
+
+  .comment {
+    padding: 16px;
+  }
+}
