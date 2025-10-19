@@ -1518,7 +1518,9 @@ body {
 .action-text {
   font-weight: 500;
 }
-* RESPONSIVE DESIGN */ @media (max-width: 1024px) {
+/* RESPONSIVE DESIGN */
+
+@media (max-width: 1024px) {
   .main-content {
     flex-direction: column;
     gap: 24px;
