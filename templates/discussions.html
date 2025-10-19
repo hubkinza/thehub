@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Hub - All Discussions</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container-wrapper">
+      <!-- Main page header -->
+      <header class="header">
+        <div class="corner-ornament corner-top-left"></div>
+        <div class="corner-ornament corner-top-right"></div>
+        <div class="corner-ornament corner-bottom-left"></div>
+        <div class="corner-ornament corner-bottom-right"></div>
+        <div class="header-content">
+          <div class="logo">
+            <div class="logo-icon">🔗</div>
+            <h1 class="site-title">The Hub</h1>
+          </div>
+          <nav class="nav">
+            <a href="/discussions.html" class="nav-link active"
+              >All Discussions</a
+            >
+            <a href="/startdiscussions.html" class="nav-link"
+              >Start Discussion</a
+            >
+            <a href="#" onclick="logout(); return false;" class="nav-link"
+              >Logout</a
+            >
+          </nav>
+        </div>
+      </header>
+
+      <div class="container">
+        <main class="main-content">
+          <!-- Search sidebar section -->
+          <aside class="sidebar">
+            <div class="sidebar-content">
+              <div class="search-section">
+                <div class="decorative-line small">
+                  <div class="line short-line"></div>
+                  <div class="line short-line"></div>
+                </div>
+                <h3 class="sidebar-title">Search Topics</h3>
+                <div class="search-box">
+                  <input
+                    type="text"
+                    id="search-input"
+                    placeholder="Search discussions..."
+                    class="search-input"
+                  />
+                  <div class="search-icon">🔍</div>
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          <!-- Main content area -->
+          <section class="content-area">
+            <div class="content-header">
+              <div class="decorative-line">
+                <div class="line"></div>
+                <div class="line"></div>
+              </div>
+              <h2 class="content-title">Trending Conversations</h2>
+              <p class="content-subtitle" id="post-count">
+                Loading discussions...
+              </p>
+            </div>
+
+            <!-- Discussions container -->
+            <div class="discussion-grid" id="discussions-container">
+              <!-- Posts will be loaded dynamically -->
+            </div>
+
+            <!-- Pagination controls -->
+            <div class="pagination" id="pagination">
+              <!-- Pagination -->
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="copyright">© 2025 The Hub</p>
+      </div>
+    </div>
+  </body>
+</html>

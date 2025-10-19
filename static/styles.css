@@ -644,3 +644,71 @@ body {
     align-items: flex-start;
   }
 }
+/* 
+   Full Width Header & Footer
+   */
+
+/* Make header and footer full viewport width */
+.header,
+.footer-bottom {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* Keep header content centered */
+.header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Auth pages */
+.auth-page .header,
+.auth-page .footer-bottom {
+  width: 100%;
+  position: static;
+  left: auto;
+  right: auto;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Mobile responsive header */
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .nav {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    padding: 12px 16px;
+  }
+
+  .header-content {
+    gap: 16px;
+  }
+
+  .nav {
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .btn {
+    width: 100%;
+    text-align: center;
+  }
+}
