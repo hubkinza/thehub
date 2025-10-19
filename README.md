@@ -38,4 +38,4 @@ The platform features role-based access control with admin capabilities for cont
 - AWS
 
 **Database structure**
-static/readme/database.png
+![ERD](static/readme/database.png)
