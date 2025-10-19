@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Hub - Start Discussion</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container-wrapper">
+      <header class="header">
+        <div class="corner-ornament corner-top-left"></div>
+        <div class="corner-ornament corner-top-right"></div>
+        <div class="corner-ornament corner-bottom-left"></div>
+        <div class="corner-ornament corner-bottom-right"></div>
+        <div class="header-content">
+          <div class="logo">
+            <div class="logo-icon">🔗</div>
+            <h1 class="site-title">The Hub</h1>
+          </div>
+          <nav class="nav">
+            <a href="/discussions.html" class="nav-link">All Discussions</a>
+            <a href="/startdiscussions.html" class="nav-link active"
+              >Start Discussion</a
+            >
+            <a href="#" onclick="logout(); return false;" class="nav-link"
+              >Logout</a
+            >
+          </nav>
+        </div>
+      </header>
+
+      <div class="container">
+        <main class="editor-main">
+          <div class="editor-container">
+            <!-- Post editor header -->
+            <div class="editor-header">
+              <div class="decorative-line">
+                <div class="line"></div>
+                <div class="line"></div>
+              </div>
+              <h1 class="editor-title">Start a New Discussion</h1>
+              <p class="editor-subtitle">
+                Share your thoughts with the community
+              </p>
+            </div>
+
+            <form id="post-form" class="editor-content">
+              <div class="form-group">
+                <input
+                  type="text"
+                  id="post-title"
+                  class="post-title-input"
+                  placeholder="What's on your mind? Add a title..."
+                  required
+                />
+              </div>
+
+              <div class="form-group">
+                <textarea
+                  id="post-content"
+                  class="post-body-input"
+                  placeholder="Start writing your thoughts... Share your ideas, ask questions, or spark a conversation..."
+                  rows="12"
+                  required
+                ></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Add Tags (optional)</label>
+                <input
+                  type="text"
+                  id="post-tags"
+                  class="tags-input"
+                  placeholder="e.g., technology, travel, advice"
+                />
+                <small class="input-help">Separate tags with commas</small>
+              </div>
+
+              <div class="editor-actions">
+                <a href="/discussions.html" class="btn btn-outline">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                  Publish Discussion
+                </button>
+              </div>
+            </form>
+          </div>
+        </main>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="copyright">© 2025 The Hub</p>
+      </div>
+    </div>
+  </body>
+</html>
