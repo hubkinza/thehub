@@ -323,7 +323,54 @@ def delete_post(post_id):
     db_object.session.commit()
 
     return jsonify({'message': 'Post deleted successfully and permanently'}), 200
+#   COMMENT ROUTES  
 
+@my_app.route('/api/posts/<int:post_id>/comments', methods=['GET'])
+def get_comments(post_id):
+    Post.query.get_or_404(post_id)
+    comments_list = Comment.query.filter_by(post_id_fk=post_id).order_by(Comment.comment_created_at.desc()).all()
+    comment_dict_list = [comment.to_dict() for comment in comments_list]
+    return jsonify(comment_dict_list), 200
+
+@my_app.route('/api/posts/<int:post_id>/comments', methods=['POST'])
+@login_required
+def create_comment(post_id):
+    Post.query.get_or_404(post_id)
+    data = request.get_json()
+
+    if data is None or 'content' not in data or data['content'].strip() == '':
+        return jsonify({'error': 'Comment content cannot be empty'}), 400
+
+    new_comment = Comment(
+        comment_text=data['content'],
+        author_id_fk=session['user_id'],
+        post_id_fk=post_id
+    )
+
+    db_object.session.add(new_comment)
+    db_object.session.commit()
+
+    return jsonify({
+        'message': 'Comment was added!',
+        'comment': new_comment.to_dict()
+    }), 201
+
+@my_app.route('/api/comments/<int:comment_id>', methods=['DELETE'])
+@login_required
+def delete_comment(comment_id):
+    comment_to_delete = Comment.query.get_or_404(comment_id)
+    current_user_object = User.query.get(session['user_id'])
+
+    is_comment_author = comment_to_delete.author_id_fk == session['user_id']
+    is_an_admin = current_user_object.is_user_admin
+
+    if not is_comment_author and not is_an_admin:
+        return jsonify({'error': 'You can only delete your own comments or be an admin'}), 403
+
+    db_object.session.delete(comment_to_delete)
+    db_object.session.commit()
+
+    return jsonify({'message': 'Comment deleted'}), 200
 
 #   SERVE HTML PAGES  
 
