@@ -56,3 +56,15 @@ async function login(email, password, remember) {
     alert("Login failed");
   }
 }
+// Logout
+async function logout() {
+  try {
+    await fetch(`${API_URL}/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    window.location.href = "/logout.html";
+  } catch (error) {
+    alert("Logout failed");
+  }
+}
