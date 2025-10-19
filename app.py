@@ -371,6 +371,7 @@ def delete_comment(comment_id):
     db_object.session.commit()
 
     return jsonify({'message': 'Comment deleted'}), 200
+
 #   LIKE ROUTES  
 
 @my_app.route('/api/posts/<int:post_id>/like', methods=['POST'])
@@ -403,6 +404,22 @@ def toggle_like(post_id):
             'liked': True,
             'like_count': new_like_count
         }), 201
+    
+#   ADMIN ROUTES  
+
+@my_app.route('/api/admin/users', methods=['GET'])
+@admin_required
+def get_all_users():
+    all_the_users = User.query.all()
+    user_data_list = [user.to_dict() for user in all_the_users]
+    return jsonify(user_data_list), 200
+
+@my_app.route('/api/admin/posts', methods=['GET'])
+@admin_required
+def get_all_posts_admin():
+    all_the_posts = Post.query.order_by(Post.post_created_at.desc()).all()
+    post_data_list = [post.to_dict() for post in all_the_posts]
+    return jsonify(post_data_list), 200
 
 #   SERVE HTML PAGES  
 
