@@ -92,5 +92,30 @@
         <p class="copyright">© 2025 The Hub</p>
       </div>
     </div>
+    <script src="/static/app.js"></script>
+    <script>
+      // Initialize page auth
+      async function init() {
+        const user = await checkAuth();
+        if (!user) {
+          window.location.href = "/login.html";
+          return;
+        }
+      }
+
+      // Handle post creation
+      document
+        .getElementById("post-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const title = document.getElementById("post-title").value;
+          const content = document.getElementById("post-content").value;
+          const tags = document.getElementById("post-tags").value;
+
+          await createPost(title, content, tags);
+        });
+
+      init();
+    </script>
   </body>
 </html>

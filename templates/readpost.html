@@ -54,5 +54,214 @@
         <p class="copyright">© 2025 The Hub</p>
       </div>
     </div>
+
+    <script src="/static/app.js"></script>
+    <script>
+      let the_current_user_data = null;
+      let the_whole_post_object = null;
+
+      // Initialize page data
+      async function init_page_startup() {
+        the_current_user_data = await checkAuth();
+
+        if (!the_current_user_data) {
+          window.location.href = "/login.html";
+          return;
+        }
+
+        const url_parameters_object = new URLSearchParams(
+          window.location.search
+        );
+        const post_id_number = url_parameters_object.get("id");
+
+        if (!post_id_number) {
+          window.location.href = "/discussions.html";
+          return;
+        }
+
+        await load_the_main_post(post_id_number);
+        await load_all_the_comments(post_id_number);
+      }
+
+      // Load post content
+      async function load_the_main_post(post_id_to_get) {
+        the_whole_post_object = await getPost(post_id_to_get);
+
+        if (!the_whole_post_object) {
+          alert("Post not found... something went rong.");
+          window.location.href = "/discussions.html";
+          return;
+        }
+
+        document.getElementById("breadcrumb-title").textContent =
+          the_whole_post_object.title;
+        document.title = the_whole_post_object.title + " - The Hub";
+
+        const container_div_for_post =
+          document.getElementById("post-container");
+
+        const html_for_all_tags = the_whole_post_object.tags
+          .map(function (tag_word) {
+            return '<span class="tag">' + tag_word + "</span>";
+          })
+          .join("");
+
+        const html_for_post_content = the_whole_post_object.content
+          .split("\n")
+          .map(function (paragraph_text) {
+            return "<p>" + paragraph_text + "</p>";
+          })
+          .join("");
+
+        container_div_for_post.innerHTML =
+          '<div class="discussion-header">' +
+          '<div class="decorative-line">' +
+          '<div class="line"></div>' +
+          '<div class="line"></div>' +
+          "</div>" +
+          '<h1 class="discussion-title">' +
+          the_whole_post_object.title +
+          "</h1>" +
+          '<div class="discussion-meta">' +
+          '<div class="author-info">' +
+          '<div class="author-avatar">' +
+          the_whole_post_object.author.substring(0, 2).toUpperCase() +
+          "</div>" +
+          '<div class="author-details">' +
+          '<span class="author-name">' +
+          the_whole_post_object.author +
+          "</span>" +
+          '<span class="publish-date">Published ' +
+          the_whole_post_object.created_at +
+          "</span>" +
+          "</div>" +
+          "</div>" +
+          '<div class="discussion-tags">' +
+          html_for_all_tags +
+          "</div>" +
+          "</div>" +
+          "</div>" +
+          '<div class="discussion-content">' +
+          html_for_post_content +
+          "</div>" +
+          '<div class="comments-section">' +
+          '<div class="comments-header">' +
+          '<div class="decorative-line"></div>' +
+          '<h2 class="comments-title">Community Replies</h2>' +
+          '<p class="comments-subtitle" id="comment-count">' +
+          the_whole_post_object.comment_count +
+          " members have shared their thoughts</p>" +
+          "</div>" +
+          '<div class="add-comment">' +
+          '<div class="comment-form-header">' +
+          '<h3 class="form-title">Join the Conversation</h3>' +
+          "</div>" +
+          '<form class="comment-form" id="comment-form">' +
+          '<div class="form-group">' +
+          '<div class="comment-input-container">' +
+          '<textarea id="comment-content" class="comment-input" placeholder="Write your comment here..." rows="4" required></textarea>' +
+          '<div class="form-actions">' +
+          '<button type="button" class="btn btn-outline" onclick="document.getElementById(\'comment-content\').value = \'\'">Cancel</button>' +
+          '<button type="submit" class="btn btn-primary">Post Comment</button>' +
+          "</div>" +
+          "</div>" +
+          "</div>" +
+          "</form>" +
+          "</div>" +
+          '<div class="comments-list" id="comments-list"></div>' +
+          "</div>" +
+          '<div class="discussion-actions">' +
+          '<div class="decorative-line small">' +
+          '<div class="line short-line"></div>' +
+          '<div class="ornament small">⚡</div>' +
+          '<div class="line short-line"></div>' +
+          "</div>" +
+          '<div class="action-buttons">' +
+          '<button class="action-button like-button" id="like-button" onclick="handle_post_like()">' +
+          '<span class="action-icon">🧡</span>' +
+          '<span class="action-text">Like</span>' +
+          '<span class="action-count" id="like-count">' +
+          the_whole_post_object.like_count +
+          "</span>" +
+          "</button>" +
+          '<button class="action-button share-button" onclick="document.getElementById(\'comment-content\').focus()">' +
+          '<span class="action-icon">💭</span>' +
+          '<span class="action-text">Comment</span>' +
+          "</button>" +
+          "</div>" +
+          "</div>";
+
+        document
+          .getElementById("comment-form")
+          .addEventListener("submit", async function (event_data) {
+            event_data.preventDefault();
+            const comment_text_entered =
+              document.getElementById("comment-content").value;
+            const new_comment_from_server = await addComment(
+              post_id_to_get,
+              comment_text_entered
+            );
+            if (new_comment_from_server) {
+              document.getElementById("comment-content").value = "";
+              await load_all_the_comments(post_id_to_get);
+            }
+          });
+      }
+
+      // Load post comments
+      async function load_all_the_comments(post_id_for_comments) {
+        const all_fetched_comments = await getComments(post_id_for_comments);
+        const container_for_comments = document.getElementById("comments-list");
+
+        if (all_fetched_comments.length === 0) {
+          container_for_comments.innerHTML =
+            '<p style="text-align: center; color: #666; padding: 20px;">No comments yet. Be the first to share your thoughts!</p>';
+          return;
+        }
+
+        container_for_comments.innerHTML = all_fetched_comments
+          .map(function (single_comment_data) {
+            return (
+              '<article class="comment">' +
+              '<div class="comment-avatar">' +
+              single_comment_data.author.substring(0, 2).toUpperCase() +
+              "</div>" +
+              '<div class="comment-content">' +
+              '<div class="comment-header">' +
+              '<span class="commenter-name">' +
+              single_comment_data.author +
+              "</span>" +
+              '<span class="comment-date">' +
+              single_comment_data.created_at +
+              "</span>" +
+              "</div>" +
+              '<p class="comment-text">' +
+              single_comment_data.content +
+              "</p>" +
+              "</div>" +
+              "</article>"
+            );
+          })
+          .join("");
+
+        document.getElementById("comment-count").textContent =
+          all_fetched_comments.length + " members have shared their thoughts";
+      }
+
+      // Handle like button
+      async function handle_post_like() {
+        const url_params_again = new URLSearchParams(window.location.search);
+        const post_id_to_like = url_params_again.get("id");
+        const like_result_from_api = await toggleLike(post_id_to_like);
+
+        if (like_result_from_api) {
+          document.getElementById("like-count").textContent =
+            like_result_from_api.like_count;
+        }
+      }
+
+      init_page_startup();
+    </script>
+  </body>
   </body>
 </html>
