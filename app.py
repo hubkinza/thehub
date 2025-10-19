@@ -371,6 +371,38 @@ def delete_comment(comment_id):
     db_object.session.commit()
 
     return jsonify({'message': 'Comment deleted'}), 200
+#   LIKE ROUTES  
+
+@my_app.route('/api/posts/<int:post_id>/like', methods=['POST'])
+@login_required
+def toggle_like(post_id):
+    post_to_like = Post.query.get_or_404(post_id)
+    current_user_id = session['user_id']
+
+    existing_like = Like.query.filter_by(
+        user_id_fk=current_user_id,
+        post_id_fk=post_id
+    ).first()
+
+    if existing_like is not None:
+        db_object.session.delete(existing_like)
+        db_object.session.commit()
+        new_like_count = len(post_to_like.likes)
+        return jsonify({
+            'message': 'Like was removed (unliked)',
+            'liked': False,
+            'like_count': new_like_count
+        }), 200
+    else:
+        new_like = Like(user_id_fk=current_user_id, post_id_fk=post_id)
+        db_object.session.add(new_like)
+        db_object.session.commit()
+        new_like_count = len(post_to_like.likes)
+        return jsonify({
+            'message': 'Post was liked!',
+            'liked': True,
+            'like_count': new_like_count
+        }), 201
 
 #   SERVE HTML PAGES  
 
