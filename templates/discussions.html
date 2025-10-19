@@ -87,5 +87,161 @@
         <p class="copyright">© 2025 The Hub</p>
       </div>
     </div>
+    <script src="/static/app.js"></script>
+    <script>
+      // Initialize page state
+      let currentPage = 1;
+      let currentUser = null;
+
+      // Initialize application
+      async function init() {
+        currentUser = await checkAuth();
+        if (!currentUser) {
+          window.location.href = "/login.html";
+          return;
+        }
+        loadDiscussions();
+      }
+
+      // Load discussions function
+      async function loadDiscussions(page = 1) {
+        const searchQuery = document.getElementById("search-input").value;
+        const data = await getPosts(page, searchQuery);
+
+        const container = document.getElementById("discussions-container");
+        const countEl = document.getElementById("post-count");
+
+        countEl.textContent = `${data.total} topics currently fueling the community`;
+
+        if (data.posts.length === 0) {
+          container.innerHTML =
+            '<p style="text-align: center; color: #666;">No discussions found.</p>';
+          return;
+        }
+
+        container.innerHTML = data.posts
+          .map(
+            (post) => `
+          <article class="discussion-card" data-post-id="${post.id}">
+            <div class="discussion-header">
+              <h3 class="discussion-title">${post.title}</h3>
+              <div class="discussion-meta">
+                <span class="discussion-author">By ${post.author}</span>
+                <span class="discussion-date">${post.created_at}</span>
+              </div>
+            </div>
+            <div class="discussion-preview">
+              <p>${post.content.substring(0, 150)}${
+              post.content.length > 150 ? "..." : ""
+            }</p>
+            </div>
+            <div class="discussion-tags">
+              ${post.tags
+                .map((tag) => `<span class="tag">${tag}</span>`)
+                .join("")}
+            </div>
+            <div class="discussion-footer">
+              <div class="discussion-stats">
+                <span class="stat" onclick="handleLikeFromList(${
+                  post.id
+                })" style="cursor: pointer;">
+                  <span class="stat-icon">🧡</span>
+                  <span class="stat-count like-count-${post.id}">${
+              post.like_count
+            }</span>
+                </span>
+                <span class="stat">
+                  <span class="stat-icon">💬</span>
+                  <span class="stat-count">${post.comment_count}</span>
+                </span>
+              </div>
+              <a href="/readpost.html?id=${
+                post.id
+              }" class="read-more">Join the Conversation</a>
+            </div>
+            ${
+              currentUser && currentUser.is_admin
+                ? `
+              <button onclick="deletePost(${post.id})" class="btn btn-outline" style="margin-top: 10px; width: 100%; background: #dc3545; color: white; border-color: #dc3545;">
+                🗑️ Admin Delete
+              </button>
+            `
+                : ""
+            }
+          </article>
+        `
+          )
+          .join("");
+
+        renderPagination(data.page, data.pages);
+      }
+
+      // Render pagination controls
+      function renderPagination(currentPage, totalPages) {
+        const pagination = document.getElementById("pagination");
+        if (totalPages <= 1) {
+          pagination.style.display = "none";
+          return;
+        }
+
+        pagination.style.display = "block";
+        pagination.innerHTML = `
+          <div class="decorative-line">
+            <div class="line short-line"></div>
+            <div class="line short-line"></div>
+          </div>
+          <div class="pagination-controls">
+            <button class="page-btn ${currentPage === 1 ? "disabled" : ""}" 
+                    onclick="loadDiscussions(${currentPage - 1})" 
+                    ${currentPage === 1 ? "disabled" : ""}>
+              ← Previous
+            </button>
+            <div class="page-numbers">
+              ${Array.from({ length: Math.min(totalPages, 5) }, (_, i) => i + 1)
+                .map(
+                  (page) => `
+                <button class="page-number ${
+                  page === currentPage ? "active" : ""
+                }" 
+                        onclick="loadDiscussions(${page})">
+                  ${page}
+                </button>
+              `
+                )
+                .join("")}
+              ${totalPages > 5 ? '<span class="page-dots">...</span>' : ""}
+            </div>
+            <button class="page-btn ${
+              currentPage === totalPages ? "disabled" : ""
+            }" 
+                    onclick="loadDiscussions(${currentPage + 1})"
+                    ${currentPage === totalPages ? "disabled" : ""}>
+              Next →
+            </button>
+          </div>
+        `;
+      }
+
+      // Search input handler
+      let searchTimeout;
+      document.getElementById("search-input").addEventListener("input", () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          loadDiscussions(1);
+        }, 500); // Wait 500ms after user stops typing
+      });
+
+      // Handle like click
+      async function handleLikeFromList(postId) {
+        const result = await toggleLike(postId);
+        if (result) {
+          document.querySelector(".like-count-" + postId).textContent =
+            result.like_count;
+        }
+      }
+
+      // Start application
+      init();
+    </script>
   </body>
 </html>

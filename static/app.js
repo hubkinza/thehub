@@ -68,3 +68,32 @@ async function logout() {
     alert("Logout failed");
   }
 }
+// Get all posts
+async function getPosts(page = 1, search = "") {
+  try {
+    const response = await fetch(
+      `${API_URL}/posts?page=${page}&search=${search}`,
+      {
+        credentials: "include",
+      }
+    );
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Failed to fetch posts");
+    return { posts: [], total: 0 };
+  }
+}
+
+// Get single post
+async function getPost(postId) {
+  try {
+    const response = await fetch(`${API_URL}/posts/${postId}`, {
+      credentials: "include",
+    });
+    return await response.json();
+  } catch (error) {
+    console.error("Failed to fetch post");
+    return null;
+  }
+}
