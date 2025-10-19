@@ -221,6 +221,108 @@ def logout():
 def current_user():
     current_user_info = User.query.get(session['user_id'])
     return jsonify(current_user_info.to_dict()), 200
+#   POST ROUTES  
+
+@my_app.route('/api/posts', methods=['GET'])
+def get_posts():
+    page_number = request.args.get('page', 1, type=int)
+    items_per_page = request.args.get('per_page', 10, type=int)
+    search_term = request.args.get('search', '', type=str)
+
+    the_query = Post.query
+
+    if search_term != '':
+        the_query = the_query.filter(
+            (Post.post_title.contains(search_term)) |
+            (Post.post_content.contains(search_term)) |
+            (Post.post_tags.contains(search_term))
+        )
+
+    post_pages_object = the_query.order_by(Post.post_created_at.desc()).paginate(
+        page=page_number, per_page=items_per_page, error_out=False
+    )
+
+    list_of_post_dictionaries = []
+    for post_item in post_pages_object.items:
+        list_of_post_dictionaries.append(post_item.to_dict())
+
+    return jsonify({
+        'posts': list_of_post_dictionaries,
+        'total': post_pages_object.total,
+        'page': post_pages_object.page,
+        'pages': post_pages_object.pages
+    }), 200
+
+@my_app.route('/api/posts/<int:post_id>', methods=['GET'])
+def get_post(post_id):
+    single_post = Post.query.get_or_404(post_id)
+    return jsonify(single_post.to_dict()), 200
+
+@my_app.route('/api/posts', methods=['POST'])
+@login_required
+def create_post():
+    data = request.get_json()
+
+    if data is None or 'title' not in data or 'content' not in data:
+        return jsonify({'error': 'Need a title and content for the post!'}), 400
+
+    new_post = Post(
+        post_title=data['title'],
+        post_content=data['content'],
+        post_tags=data.get('tags', ''),
+        author_id_fk=session['user_id']
+    )
+
+    db_object.session.add(new_post)
+    db_object.session.commit()
+
+    return jsonify({
+        'message': 'Post was created successfully!',
+        'post': new_post.to_dict()
+    }), 201
+
+@my_app.route('/api/posts/<int:post_id>', methods=['PUT'])
+@login_required
+def update_post(post_id):
+    post_to_edit = Post.query.get_or_404(post_id)
+
+    if post_to_edit.author_id_fk != session['user_id']:
+        return jsonify({'error': 'Sorry, you can only edit your own posts'}), 403
+
+    data = request.get_json()
+
+    if 'title' in data and data['title'] != '':
+        post_to_edit.post_title = data['title']
+    if 'content' in data and data['content'] != '':
+        post_to_edit.post_content = data['content']
+    if 'tags' in data:
+        post_to_edit.post_tags = data['tags']
+
+    post_to_edit.post_updated_at = datetime.utcnow()
+
+    db_object.session.commit()
+
+    return jsonify({
+        'message': 'Post was updated!',
+        'post': post_to_edit.to_dict()
+    }), 200
+
+@my_app.route('/api/posts/<int:post_id>', methods=['DELETE'])
+@login_required
+def delete_post(post_id):
+    post_to_delete = Post.query.get_or_404(post_id)
+    current_user_object = User.query.get(session['user_id'])
+
+    is_author = post_to_delete.author_id_fk == session['user_id']
+    is_an_admin = current_user_object.is_user_admin
+
+    if not is_author and not is_an_admin:
+        return jsonify({'error': 'You do not have permission to delete this post'}), 403
+
+    db_object.session.delete(post_to_delete)
+    db_object.session.commit()
+
+    return jsonify({'message': 'Post deleted successfully and permanently'}), 200
 
 
 #   SERVE HTML PAGES  
