@@ -36,3 +36,6 @@ The platform features role-based access control with admin capabilities for cont
 **Deployment:**
 
 - AWS
+
+**Database structure**
+static/readme/database.png
