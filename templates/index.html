@@ -70,5 +70,57 @@
         <p class="copyright">© 2025 The Hub</p>
       </div>
     </div>
+
+    <script src="/static/app.js"></script>
+    <script>
+      // Load homepage posts
+      async function loadLatestPosts() {
+        const data = await getPosts(1);
+        const container = document.getElementById("latest-posts");
+
+        if (data.posts.length === 0) {
+          container.innerHTML =
+            '<p style="text-align: center; color: #666;">No discussions yet. Be the first to start one!</p>';
+          return;
+        }
+
+        container.innerHTML = data.posts
+          .slice(0, 3)
+          .map(
+            (post) => `
+          <div class="blog-card">
+            <div class="blog-header">
+              <div class="blog-info">
+                <h3>${post.title}</h3>
+                <p class="blog-author">by ${post.author}</p>
+                <p class="blog-date">${post.created_at}</p>
+              </div>
+              <div class="blog-likes">
+                <span class="heart">🧡</span>
+                <span class="like-count">${post.like_count}</span>
+              </div>
+            </div>
+
+            <div class="blog-excerpt">
+              "${post.content.substring(0, 100)}${
+              post.content.length > 100 ? "..." : ""
+            }"
+            </div>
+
+            <div class="blog-tags">
+              ${post.tags
+                .map((tag) => `<span class="tag">${tag}</span>`)
+                .join("")}
+            </div>
+
+            <a href="/login.html" class="read-more">Join the Discussion →</a>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      loadLatestPosts();
+    </script>
   </body>
 </html>

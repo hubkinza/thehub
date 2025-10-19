@@ -99,5 +99,18 @@
         <p class="copyright">© 2025 The Hub</p>
       </div>
     </div>
+    <script src="/static/app.js"></script>
+    <script>
+      // Handle login form
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const remember = document.getElementById("remember").checked;
+          await login(email, password, remember);
+        });
+    </script>
   </body>
 </html>
