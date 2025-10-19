@@ -81,5 +81,22 @@
         <p class="copyright">© 2025 The Hub</p>
       </div>
     </div>
+    <script src="/static/app.js"></script>
+    <script>
+      // Perform logout operation
+      async function performLogout() {
+        await fetch(`${API_URL}/logout`, {
+          method: "POST",
+          credentials: "include",
+        });
+      }
+
+      performLogout();
+
+      // Auto redirect home
+      setTimeout(function () {
+        window.location.href = "/index.html";
+      }, 5000);
+    </script>
   </body>
 </html>
