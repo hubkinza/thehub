@@ -421,6 +421,47 @@ def get_all_posts_admin():
     post_data_list = [post.to_dict() for post in all_the_posts]
     return jsonify(post_data_list), 200
 
+#   INITIALIZE DATABASE  
+
+@my_app.route('/api/init-db', methods=['POST'])
+def init_database():
+    """Initialize database tables and create default admin user"""
+    print("Trying to initialize the database...")
+    try:
+        db_object.create_all()
+
+        # Get admin credentials from environment variables
+        default_admin_email = os.getenv('ADMIN_EMAIL', 'admin@thehub.com')
+        admin_default_password = os.getenv('ADMIN_PASSWORD', 'admin123')
+        
+        admin_check = User.query.filter_by(user_email=default_admin_email).first()
+
+        if admin_check is None:
+            hashed_admin_password = my_bcrypt_tool.generate_password_hash(admin_default_password).decode('utf-8')
+
+            new_admin_user = User(
+                username='admin',
+                user_email=default_admin_email,
+                password_hash_stored=hashed_admin_password,
+                is_user_admin=True
+            )
+            db_object.session.add(new_admin_user)
+            db_object.session.commit()
+            print("Default admin user created!")
+
+        return jsonify({
+            'message': 'Database tables are created and default admin is checked/created!',
+            'admin_credentials': {
+                'email': default_admin_email,
+                'password': '***hidden***',
+                'note': 'Check your .env file for credentials'
+            }
+        }), 200
+    except Exception as e:
+        print(f"Database initialization FAILED! Error: {e}")
+        return jsonify({'error': 'Database setup failed: ' + str(e)}), 500
+
+
 #   SERVE HTML PAGES  
 
 @my_app.route('/')
