@@ -117,6 +117,111 @@ class Like(db_object.Model):
     __table_args__ = (db_object.UniqueConstraint('user_id', 'post_id', name='unique_user_post_like'),)
 
 
+#   AUTH CHECK FUNCTIONS (DECORATORS)  
+
+def login_required(function_to_decorate):
+    @wraps(function_to_decorate)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            response_data = {'error': 'Authentication required'}
+            return jsonify(response_data), 401
+        return function_to_decorate(*args, **kwargs)
+    return decorated_function
+
+def admin_required(function_to_decorate):
+    @wraps(function_to_decorate)
+    def decorated_function(*args, **kwargs):
+        if 'user_id' not in session:
+            return jsonify({'error': 'Authentication required'}), 401
+
+        current_user_id = session['user_id']
+        user_info = User.query.get(current_user_id)
+
+        if user_info is None or user_info.is_user_admin == False:
+            return jsonify({'error': 'Admin privileges required'}), 403
+
+        return function_to_decorate(*args, **kwargs)
+    return decorated_function
+
+#   AUTH ROUTES (Login/Logout/Register)  
+
+@my_app.route('/api/register', methods=['POST'])
+def register():
+    data = request.get_json()
+
+    if data is None or 'username' not in data or 'email' not in data or 'password' not in data:
+        return jsonify({'error': 'Missing required fields in request'}), 400
+
+    username_input = data['username']
+    email_input = data['email']
+    password_input = data['password']
+
+    # Check if user already exists
+    existing_user_by_email = User.query.filter_by(user_email=email_input).first()
+    if existing_user_by_email is not None:
+        return jsonify({'error': 'Email is already registered'}), 400
+
+    existing_user_by_username = User.query.filter_by(username=username_input).first()
+    if existing_user_by_username is not None:
+        return jsonify({'error': 'Username is already taken by someone else'}), 400
+
+    # Hash the password
+    hashed_password_safe = my_bcrypt_tool.generate_password_hash(password_input).decode('utf-8')
+
+    # Create new user
+    new_user = User(
+        username=username_input,
+        user_email=email_input,
+        password_hash_stored=hashed_password_safe,
+        is_user_admin=False
+    )
+
+    db_object.session.add(new_user)
+    db_object.session.commit()
+
+    # Log the user in
+    session['user_id'] = new_user.user_id
+    session.permanent = True
+
+    return jsonify({
+        'message': 'Registration worked perfectly',
+        'user': new_user.to_dict()
+    }), 201
+
+@my_app.route('/api/login', methods=['POST'])
+def login():
+    data = request.get_json()
+
+    if data is None or 'email' not in data or 'password' not in data:
+        return jsonify({'error': 'You must provide email AND password'}), 400
+
+    login_email = data['email']
+    login_password = data['password']
+
+    the_user_we_are_looking_for = User.query.filter_by(user_email=login_email).first()
+
+    if the_user_we_are_looking_for is None or not my_bcrypt_tool.check_password_hash(the_user_we_are_looking_for.password_hash_stored, login_password):
+        return jsonify({'error': 'Invalid email or password. Please try again.'}), 401
+
+    session['user_id'] = the_user_we_are_looking_for.user_id
+    session.permanent = data.get('remember', False)
+
+    return jsonify({
+        'message': 'Login successful, welcome!',
+        'user': the_user_we_are_looking_for.to_dict()
+    }), 200
+
+@my_app.route('/api/logout', methods=['POST'])
+def logout():
+    session.pop('user_id', None)
+    return jsonify({'message': 'You have been logged out!'}), 200
+
+@my_app.route('/api/current-user', methods=['GET'])
+@login_required
+def current_user():
+    current_user_info = User.query.get(session['user_id'])
+    return jsonify(current_user_info.to_dict()), 200
+
 
 #   SERVE HTML PAGES  
 
