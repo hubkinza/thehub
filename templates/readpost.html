@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Discussion - The Hub</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="container-wrapper">
+      <header class="header">
+        <div class="corner-ornament corner-top-left"></div>
+        <div class="corner-ornament corner-top-right"></div>
+        <div class="corner-ornament corner-bottom-left"></div>
+        <div class="corner-ornament corner-bottom-right"></div>
+        <div class="header-content">
+          <div class="logo">
+            <div class="logo-icon">🔗</div>
+            <h1 class="site-title">The Hub</h1>
+          </div>
+          <nav class="nav">
+            <a href="/discussions.html" class="nav-link">All Discussions</a>
+            <a href="/startdiscussions.html" class="nav-link"
+              >Start Discussion</a
+            >
+            <a href="#" onclick="logout(); return false;" class="nav-link"
+              >Logout</a
+            >
+          </nav>
+        </div>
+      </header>
+
+      <div class="container">
+        <!-- Discussion page navigation -->
+        <nav class="breadcrumb">
+          <div class="breadcrumb-content">
+            <a href="/discussions.html" class="breadcrumb-link"
+              >All Discussions</a
+            >
+            <span class="breadcrumb-current" id="breadcrumb-title"
+              >Loading...</span
+            >
+          </div>
+        </nav>
+
+        <main class="post-main-content">
+          <article class="discussion-article" id="post-container">
+            <p style="text-align: center; color: #666">Loading discussion...</p>
+          </article>
+        </main>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="copyright">© 2025 The Hub</p>
+      </div>
+    </div>
+  </body>
+</html>
