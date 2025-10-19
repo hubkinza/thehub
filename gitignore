@@ -1,0 +1,31 @@
+# Environment Variables
+
+.env
+
+# Python
+
+**pycache**/
+_.py[cod]
+_$py.class
+\*.so
+.Python
+venv/
+env/
+ENV/
+
+# Database
+
+_.db
+_.sqlite3
+
+# IDE
+
+.vscode/
+.idea/
+_.swp
+_.swo
+
+# OS
+
+.DS_Store
+Thumbs.db
