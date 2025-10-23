@@ -28,17 +28,19 @@ async function register(username, email, password) {
     });
     const data = await response.json();
     if (response.ok) {
+      alert("Registration successful! Welcome to The Hub!");
       window.location.href = "/discussions.html";
     } else {
-      alert(data.error);
+      alert(data.error || "Registration failed. Please try again.");
     }
   } catch (error) {
-    alert("Registration failed");
+    console.error("Registration error:", error);
+    alert("An error occurred during registration. Please try again.");
   }
 }
 
 // Login
-async function login(email, password, remember) {
+async function login(email, password, remember = false) {
   try {
     const response = await fetch(`${API_URL}/login`, {
       method: "POST",
@@ -48,26 +50,41 @@ async function login(email, password, remember) {
     });
     const data = await response.json();
     if (response.ok) {
+      alert("Login successful! Welcome back!");
       window.location.href = "/discussions.html";
     } else {
-      alert(data.error);
+      alert(data.error || "Login failed. Please try again.");
     }
   } catch (error) {
-    alert("Login failed");
+    console.error("Login error:", error);
+    alert("An error occurred during login. Please try again.");
   }
 }
+
 // Logout
 async function logout() {
+  // Ask for confirmation before logging out
+  if (!confirm("Are you sure you want to logout?")) {
+    return; // User clicked "Cancel", do nothing
+  }
+
   try {
-    await fetch(`${API_URL}/logout`, {
+    const response = await fetch(`${API_URL}/logout`, {
       method: "POST",
       credentials: "include",
     });
-    window.location.href = "/logout.html";
+    if (response.ok) {
+      alert("You have been logged out successfully!");
+      window.location.href = "/login.html";
+    } else {
+      alert("Logout failed. Please try again.");
+    }
   } catch (error) {
-    alert("Logout failed");
+    console.error("Logout error:", error);
+    alert("An error occurred during logout.");
   }
 }
+
 // Get all posts
 async function getPosts(page = 1, search = "") {
   try {
@@ -97,6 +114,7 @@ async function getPost(postId) {
     return null;
   }
 }
+
 // Create post
 async function createPost(title, content, tags) {
   try {
@@ -108,9 +126,10 @@ async function createPost(title, content, tags) {
     });
     const data = await response.json();
     if (response.ok) {
+      alert("Post created successfully!");
       window.location.href = "/discussions.html";
     } else {
-      alert(data.error);
+      alert(data.error || "Failed to create post.");
     }
   } catch (error) {
     alert("Failed to create post");
@@ -131,7 +150,7 @@ async function deletePost(postId) {
       alert("Post deleted successfully");
       window.location.href = "/discussions.html";
     } else {
-      alert(data.error);
+      alert(data.error || "Failed to delete post.");
     }
   } catch (error) {
     alert("Failed to delete post");
@@ -163,7 +182,7 @@ async function addComment(postId, content) {
     if (response.ok) {
       return data.comment;
     } else {
-      alert(data.error);
+      alert(data.error || "Failed to add comment.");
       return null;
     }
   } catch (error) {
