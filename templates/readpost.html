@@ -55,6 +55,44 @@
       </div>
     </div>
 
+    <!-- Edit Modal -->
+    <div class="modal-overlay" id="edit-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Edit Post</h2>
+          <button class="close-modal" onclick="closeEditModal()">×</button>
+        </div>
+        <form id="edit-form" onsubmit="handleEditSubmit(event)">
+          <div class="edit-form-group">
+            <label for="edit-title">Title</label>
+            <input type="text" id="edit-title" required />
+          </div>
+          <div class="edit-form-group">
+            <label for="edit-content">Content</label>
+            <textarea id="edit-content" required></textarea>
+          </div>
+          <div class="edit-form-group">
+            <label for="edit-tags">Tags (comma-separated)</label>
+            <input
+              type="text"
+              id="edit-tags"
+              placeholder="e.g. technology, discussion, help"
+            />
+          </div>
+          <div class="modal-actions">
+            <button
+              type="button"
+              class="btn btn-outline"
+              onclick="closeEditModal()"
+            >
+              Cancel
+            </button>
+            <button type="submit" class="btn btn-primary">Save Changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script src="/static/app.js"></script>
     <script>
       let the_current_user_data = null;
@@ -88,7 +126,7 @@
         the_whole_post_object = await getPost(post_id_to_get);
 
         if (!the_whole_post_object) {
-          alert("Post not found... something went rong.");
+          alert("Post not found... something went wrong.");
           window.location.href = "/discussions.html";
           return;
         }
@@ -113,15 +151,25 @@
           })
           .join("");
 
+        // Check if current user is the author
+        const is_author =
+          the_current_user_data.id === the_whole_post_object.author_id;
+        const edit_button_html = is_author
+          ? '<button class="edit-post-button" onclick="openEditModal()">✏️ Edit Post</button>'
+          : "";
+
         container_div_for_post.innerHTML =
           '<div class="discussion-header">' +
           '<div class="decorative-line">' +
           '<div class="line"></div>' +
           '<div class="line"></div>' +
           "</div>" +
+          '<div style="display: flex; justify-content: space-between; align-items: flex-start;">' +
           '<h1 class="discussion-title">' +
           the_whole_post_object.title +
           "</h1>" +
+          edit_button_html +
+          "</div>" +
           '<div class="discussion-meta">' +
           '<div class="author-info">' +
           '<div class="author-avatar">' +
@@ -260,8 +308,73 @@
         }
       }
 
+      // Open edit modal
+      function openEditModal() {
+        document.getElementById("edit-title").value =
+          the_whole_post_object.title;
+        document.getElementById("edit-content").value =
+          the_whole_post_object.content;
+        document.getElementById("edit-tags").value =
+          the_whole_post_object.tags.join(", ");
+        document.getElementById("edit-modal").classList.add("active");
+      }
+
+      // Close edit modal
+      function closeEditModal() {
+        document.getElementById("edit-modal").classList.remove("active");
+      }
+
+      // Handle edit form submission
+      async function handleEditSubmit(event) {
+        event.preventDefault();
+
+        const title = document.getElementById("edit-title").value;
+        const content = document.getElementById("edit-content").value;
+        const tags = document.getElementById("edit-tags").value;
+
+        const url_params = new URLSearchParams(window.location.search);
+        const post_id = url_params.get("id");
+
+        try {
+          const response = await fetch(`/api/posts/${post_id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              title: title,
+              content: content,
+              tags: tags,
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            alert("Post updated successfully!");
+            closeEditModal();
+            // Reload the post to show updated content
+            await load_the_main_post(post_id);
+          } else {
+            alert(data.error || "Failed to update post");
+          }
+        } catch (error) {
+          console.error("Error updating post:", error);
+          alert("An error occurred while updating the post");
+        }
+      }
+
+      // Close modal when clicking outside
+      document
+        .getElementById("edit-modal")
+        .addEventListener("click", function (event) {
+          if (event.target === this) {
+            closeEditModal();
+          }
+        });
+
       init_page_startup();
     </script>
-  </body>
   </body>
 </html>
