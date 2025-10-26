@@ -1,3 +1,5 @@
+/* jshint esversion: 8 */
+
 // API Base URL
 const API_URL = "/api";
 

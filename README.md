@@ -39,3 +39,8 @@ The platform features role-based access control with admin capabilities for cont
 
 **Database structure**
 ![ERD](static/readme/database.png)
+
+**Automated testing**
+![ERD](static/readme/CSS.png)
+
+![ERD](static/readme/js.png)
