@@ -1,31 +1,39 @@
-# Environment Variables
+# Environment variables
 
 .env
 
-# Python
+# Python bytecode
 
 **pycache**/
 _.py[cod]
 _$py.class
+
+# Shared object files
+
 \*.so
-.Python
+
+# Virtual environments
+
 venv/
 env/
-.env
+.Python
 
-# Database
+# Database files
 
 _.db
 _.sqlite3
 
-# IDE
+# IDEs
 
 .vscode/
 .idea/
+
+# Editor swap files
+
 _.swp
 _.swo
 
-# OS
+# OS files
 
 .DS_Store
 Thumbs.db
