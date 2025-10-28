@@ -1,6 +1,7 @@
-<img width="1021" height="968" alt="image" src="https://github.com/user-attachments/assets/601c9411-29cd-430b-8f8f-154e5ad9c0a9" />
+The HUB A modern, discussion platform where users can share ideas, engage in conversations, and build a community.
 
-A modern, discussion platform where users can share ideas, engage in conversations, and build a community.
+<img width="1019" height="674" alt="responsive" src="https://github.com/user-attachments/assets/6ec9dca4-61e3-4fed-aad6-491036ed5404" />
+
 
 🔗 Live Site: http://13.49.238.130
 
