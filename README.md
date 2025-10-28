@@ -33,9 +33,7 @@ The platform features role-based access control with admin capabilities for cont
 - HTML5
 - CSS
 
-**Deployment:**
 
-- AWS
 # 🎨 UI/UX Design
 
 ### Design Philosophy
@@ -47,6 +45,8 @@ The Hub embraces a clean, minimalist aesthetic with a focus on readability and u
 - **Accent Color:** `#8B4513` (Saddle brown)
 - **Interactive Elements:** `#FF6B35` (Orange)
 - **Admin Actions:** `#DC3545` (Red)
+  <img width="1024" height="1024" alt="color " src="https://github.com/user-attachments/assets/315e8fc7-7c70-4e69-8fd9-67a33e666de3" />
+
 
 ### Typography
 - **Headings:** Georgia, serif
