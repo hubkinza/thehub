@@ -1,3 +1,5 @@
+<img width="1021" height="968" alt="image" src="https://github.com/user-attachments/assets/601c9411-29cd-430b-8f8f-154e5ad9c0a9" />
+
 A modern, discussion platform where users can share ideas, engage in conversations, and build a community.
 
 🔗 Live Site: http://13.49.238.130
@@ -40,12 +42,12 @@ The platform features role-based access control with admin capabilities for cont
 The Hub embraces a clean, minimalist aesthetic with a focus on readability and user engagement. The design prioritizes content while maintaining visual appeal through subtle decorative elements and a warm color palette.
 
 ### Color Palette
-- **Primary Background:** `#FFF8F0` (Warm cream)
-- **Text Primary:** `#2C1810` (Dark brown)
-- **Accent Color:** `#8B4513` (Saddle brown)
-- **Interactive Elements:** `#FF6B35` (Orange)
-- **Admin Actions:** `#DC3545` (Red)
-  <img width="1024" height="1024" alt="color " src="https://github.com/user-attachments/assets/315e8fc7-7c70-4e69-8fd9-67a33e666de3" />
+Primary Brand:    #ff9500 (Orange)
+Primary Text:     #1d1d1f (Almost Black)
+Secondary Text:   #86868b (Gray)
+Backgrounds:      #fff, #f5f5f7, #fafafa
+Borders:          #d2d2d7, #e8e8ed
+<img width="991" height="305" alt="thehubcolors" src="https://github.com/user-attachments/assets/214627e5-e167-46f0-ad48-d50aed8162e2" />
 
 
 ### Typography
