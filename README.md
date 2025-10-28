@@ -186,18 +186,6 @@ Borders:          #d2d2d7, #e8e8ed
 
 ---
 
-### Environment Variables
-
-For production, set these environment variables:
-```
-SECRET_KEY=your-secret-key-here
-DATABASE_URL=postgresql://user:pass@host:port/database
-FLASK_ENV=production
-```
-
-
----
-
 ## 🔮 Future Improvements
 
 ### Short-Term Enhancements
@@ -234,7 +222,6 @@ FLASK_ENV=production
 - [ ] **Performance Optimization** - Caching layer (Redis), CDN for static assets
 
 ---
-## Deployment 
 ## Deployment & Setup
 
 ### Prerequisites
