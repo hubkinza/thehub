@@ -179,6 +179,9 @@ Borders:          #d2d2d7, #e8e8ed
 
 
 ### Automated testing 
+## HTML
+<img width="2934" height="1598" alt="image" src="https://github.com/user-attachments/assets/ee7c1ede-7176-47cb-9ce2-d19609955e5e" />
+
 ## CSS Validator
 ![ERD](static/readme/CSS.png)
 ## JSHINT
