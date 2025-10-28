@@ -229,6 +229,138 @@ FLASK_ENV=production
 - [ ] **Performance Optimization** - Caching layer (Redis), CDN for static assets
 
 ---
+## Deployment 
+## Deployment & Setup
+
+### Prerequisites
+- **Python version:** 3.12+  
+- **Pip & Virtualenv** installed  
+- **PostgreSQL database** or any production-ready database
+- **Environment variables** (can be stored in `.env` for local dev):
+  ```bash
+  SECRET_KEY=your_secret_key
+  DATABASE_URL=postgresql://user:password@host:port/dbname
+  FLASK_ENV=development  # use 'production' in production
+  FLASK_DEBUG=False      # ensure debug is off for production
+  ADMIN_EMAIL=admin@thehub.com
+  ADMIN_PASSWORD=admin123
+
+## Installation & Setup
+
+### Local Development
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/hubkinza/thehub.git
+   cd thehub
+   ```
+
+2. **Create and activate a virtual environment:**
+   ```bash
+   python3 -m venv venv
+   source venv/bin/activate
+   ```
+
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Initialize the database:**
+   ```bash
+   python
+   >>> from app import db_object, my_app
+   >>> with my_app.app_context(): db_object.create_all()
+   >>> exit()
+   ```
+
+5. **Run the app locally for testing:**
+   ```bash
+   python app.py
+   ```
+
+6. **Access locally at** `http://127.0.0.1:5000`
+
+> **Note:** Debug mode can be toggled with `debug=True/False` in `app.py`.
+
+---
+
+## Production Deployment (AWS EC2 + Gunicorn + Nginx)
+
+### 1. Server Setup
+
+- Launch an Ubuntu 24.04 EC2 instance and clone the repository.
+- Create a Python virtual environment (venv) and install dependencies.
+- Configure environment variables in `.env` or system environment.
+
+### 2. Configure Gunicorn Service
+
+Create a Gunicorn systemd service at `/etc/systemd/system/thehub.service`:
+
+```ini
+[Unit]
+Description=TheHub Flask Application
+After=network.target
+
+[Service]
+User=ubuntu
+Group=www-data
+WorkingDirectory=/home/ubuntu/thehub
+Environment="DATABASE_URL=postgresql://user:pass@host/db"
+Environment="SECRET_KEY=mykey"
+ExecStart=/home/ubuntu/thehub/venv/bin/gunicorn -w 3 -b 127.0.0.1:8000 app:my_app
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### 3. Start Gunicorn Service
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable thehub
+sudo systemctl start thehub
+sudo systemctl status thehub
+```
+
+### 4. Configure Nginx
+
+Create an Nginx configuration file at `/etc/nginx/sites-available/thehub`:
+
+```nginx
+server {
+    listen 80;
+    server_name your_domain_or_IP;
+    
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    location /static/ {
+        alias /home/ubuntu/thehub/static/;
+    }
+}
+```
+
+### 5. Enable Nginx Site
+
+```bash
+sudo ln -s /etc/nginx/sites-available/thehub /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+### Production Notes
+
+- Static files are served directly by Nginx for performance.
+- Ensure `debug=False` in `app.py` for production.
+- Connect to the production database as specified in `DATABASE_URL`.
 
 ## 🙏 Credits
 
