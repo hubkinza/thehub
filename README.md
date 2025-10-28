@@ -1,4 +1,6 @@
-The HUB A modern, discussion platform where users can share ideas, engage in conversations, and build a community.
+The HUB 
+
+A modern, discussion platform where users can share ideas, engage in conversations, and build a community.
 
 <img width="1019" height="674" alt="responsive" src="https://github.com/user-attachments/assets/6ec9dca4-61e3-4fed-aad6-491036ed5404" />
 
