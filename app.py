@@ -479,4 +479,4 @@ def serve_page(path):
 if __name__ == '__main__':
     with my_app.app_context():
         db_object.create_all()
-    my_app.run(debug=True, port=5000)
+    my_app.run(debug=False, port=5000)
