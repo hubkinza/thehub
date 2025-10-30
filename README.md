@@ -188,7 +188,7 @@ Borders:          #d2d2d7, #e8e8ed
 ![ERD](static/readme/js.png)
 
 ## Python 
-<img width="2934" height="1598" alt="image" src="https://github.com/user-attachments/assets/7f054cb8-31ac-4e1d-8154-dac0592ef325" />
+<img width="2934" height="1598" alt="image" src="https://github.com/user-attachments/assets/5328c992-8e21-4f68-b82c-e0e9624315b8" />
 
 
 ---
