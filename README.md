@@ -187,6 +187,10 @@ Borders:          #d2d2d7, #e8e8ed
 ## JSHINT
 ![ERD](static/readme/js.png)
 
+## Python 
+<img width="2934" height="1598" alt="image" src="https://github.com/user-attachments/assets/7f054cb8-31ac-4e1d-8154-dac0592ef325" />
+
+
 ---
 
 ## 🔮 Future Improvements
