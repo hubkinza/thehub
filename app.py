@@ -1,4 +1,4 @@
-# Imports 
+# Imports
 from flask import Flask, request, jsonify, session, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -11,35 +11,52 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
-#  APP SETUP 
+#  APP SETUP
 
-my_app = Flask(__name__) 
+my_app = Flask(__name__)
 
 # Configuration settings - NOW READING FROM ENVIRONMENT VARIABLES!
-my_app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'fallback-secret-key-change-me')
+my_app.config['SECRET_KEY'] = os.getenv(
+    'SECRET_KEY', 'fallback-secret-key-change-me'
+)
 my_app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 my_app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 my_app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
-db_object = SQLAlchemy(my_app) 
-my_bcrypt_tool = Bcrypt(my_app) 
-CORS(my_app, supports_credentials=True) 
+db_object = SQLAlchemy(my_app)
+my_bcrypt_tool = Bcrypt(my_app)
+CORS(my_app, supports_credentials=True)
 
-#   DATABASE MODELS   
+#   DATABASE MODELS
 
-class User(db_object.Model): 
+
+class User(db_object.Model):
     # The columns for the User table
-    user_id = db_object.Column('id', db_object.Integer, primary_key=True) 
-    username = db_object.Column(db_object.String(80), unique=True, nullable=False)
-    user_email = db_object.Column('email', db_object.String(120), unique=True, nullable=False) 
-    password_hash_stored = db_object.Column('password_hash', db_object.String(200), nullable=False)
+    user_id = db_object.Column('id', db_object.Integer, primary_key=True)
+    username = db_object.Column(
+        db_object.String(80), unique=True, nullable=False
+    )
+    user_email = db_object.Column(
+        'email', db_object.String(120), unique=True, nullable=False
+    )
+    password_hash_stored = db_object.Column(
+        'password_hash', db_object.String(200), nullable=False
+    )
     is_user_admin = db_object.Column('is_admin', db_object.Boolean, default=False)
-    account_created_at = db_object.Column('created_at', db_object.DateTime, default=datetime.utcnow)
+    account_created_at = db_object.Column(
+        'created_at', db_object.DateTime, default=datetime.utcnow
+    )
 
     # Relationships to other tables
-    posts = db_object.relationship('Post', backref='author', lazy=True, cascade='all, delete-orphan')
-    comments = db_object.relationship('Comment', backref='author', lazy=True, cascade='all, delete-orphan')
-    likes = db_object.relationship('Like', backref='user', lazy=True, cascade='all, delete-orphan')
+    posts = db_object.relationship(
+        'Post', backref='author', lazy=True, cascade='all, delete-orphan'
+    )
+    comments = db_object.relationship(
+        'Comment', backref='author', lazy=True, cascade='all, delete-orphan'
+    )
+    likes = db_object.relationship(
+        'Like', backref='user', lazy=True, cascade='all, delete-orphan'
+    )
 
     # function to turn the database object into a dictionary (for JSON)
     def to_dict(self):
@@ -51,19 +68,32 @@ class User(db_object.Model):
             'created_at': self.account_created_at.strftime('%Y-%m-%d')
         }
 
+
 class Post(db_object.Model):
     # Columns for the Post table
     post_id = db_object.Column('id', db_object.Integer, primary_key=True)
     post_title = db_object.Column('title', db_object.String(200), nullable=False)
     post_content = db_object.Column('content', db_object.Text, nullable=False)
     post_tags = db_object.Column('tags', db_object.String(200))
-    author_id_fk = db_object.Column('author_id', db_object.Integer, db_object.ForeignKey('user.id'), nullable=False)
-    post_created_at = db_object.Column('created_at', db_object.DateTime, default=datetime.utcnow)
-    post_updated_at = db_object.Column('updated_at', db_object.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    author_id_fk = db_object.Column(
+        'author_id', db_object.Integer,
+        db_object.ForeignKey('user.id'), nullable=False
+    )
+    post_created_at = db_object.Column(
+        'created_at', db_object.DateTime, default=datetime.utcnow
+    )
+    post_updated_at = db_object.Column(
+        'updated_at', db_object.DateTime,
+        default=datetime.utcnow, onupdate=datetime.utcnow
+    )
 
     # Relationships
-    comments = db_object.relationship('Comment', backref='post', lazy=True, cascade='all, delete-orphan')
-    likes = db_object.relationship('Like', backref='post', lazy=True, cascade='all, delete-orphan')
+    comments = db_object.relationship(
+        'Comment', backref='post', lazy=True, cascade='all, delete-orphan'
+    )
+    likes = db_object.relationship(
+        'Like', backref='post', lazy=True, cascade='all, delete-orphan'
+    )
 
     def to_dict(self):
         # Calculate tags list
@@ -89,13 +119,22 @@ class Post(db_object.Model):
             'comment_count': how_many_comments
         }
 
+
 class Comment(db_object.Model):
     # Columns for the Comment table
     comment_id = db_object.Column('id', db_object.Integer, primary_key=True)
     comment_text = db_object.Column('content', db_object.Text, nullable=False)
-    author_id_fk = db_object.Column('author_id', db_object.Integer, db_object.ForeignKey('user.id'), nullable=False)
-    post_id_fk = db_object.Column('post_id', db_object.Integer, db_object.ForeignKey('post.id'), nullable=False)
-    comment_created_at = db_object.Column('created_at', db_object.DateTime, default=datetime.utcnow)
+    author_id_fk = db_object.Column(
+        'author_id', db_object.Integer,
+        db_object.ForeignKey('user.id'), nullable=False
+    )
+    post_id_fk = db_object.Column(
+        'post_id', db_object.Integer,
+        db_object.ForeignKey('post.id'), nullable=False
+    )
+    comment_created_at = db_object.Column(
+        'created_at', db_object.DateTime, default=datetime.utcnow
+    )
 
     def to_dict(self):
         return {
@@ -106,18 +145,31 @@ class Comment(db_object.Model):
             'created_at': self.comment_created_at.strftime('%B %d, %Y')
         }
 
+
 class Like(db_object.Model):
     # Columns for the Like table
     like_id = db_object.Column('id', db_object.Integer, primary_key=True)
-    user_id_fk = db_object.Column('user_id', db_object.Integer, db_object.ForeignKey('user.id'), nullable=False)
-    post_id_fk = db_object.Column('post_id', db_object.Integer, db_object.ForeignKey('post.id'), nullable=False)
-    like_created_at = db_object.Column('created_at', db_object.DateTime, default=datetime.utcnow)
+    user_id_fk = db_object.Column(
+        'user_id', db_object.Integer,
+        db_object.ForeignKey('user.id'), nullable=False
+    )
+    post_id_fk = db_object.Column(
+        'post_id', db_object.Integer,
+        db_object.ForeignKey('post.id'), nullable=False
+    )
+    like_created_at = db_object.Column(
+        'created_at', db_object.DateTime, default=datetime.utcnow
+    )
 
     # Make sure a user can only like a post once
-    __table_args__ = (db_object.UniqueConstraint('user_id', 'post_id', name='unique_user_post_like'),)
+    __table_args__ = (
+        db_object.UniqueConstraint(
+            'user_id', 'post_id', name='unique_user_post_like'
+        ),
+    )
 
 
-#   AUTH CHECK FUNCTIONS (DECORATORS)  
+#   AUTH CHECK FUNCTIONS (DECORATORS)
 
 def login_required(function_to_decorate):
     @wraps(function_to_decorate)
@@ -128,6 +180,7 @@ def login_required(function_to_decorate):
         return function_to_decorate(*args, **kwargs)
     return decorated_function
 
+
 def admin_required(function_to_decorate):
     @wraps(function_to_decorate)
     def decorated_function(*args, **kwargs):
@@ -137,19 +190,21 @@ def admin_required(function_to_decorate):
         current_user_id = session['user_id']
         user_info = User.query.get(current_user_id)
 
-        if user_info is None or user_info.is_user_admin == False:
+        if user_info is None or user_info.is_user_admin is False:
             return jsonify({'error': 'Admin privileges required'}), 403
 
         return function_to_decorate(*args, **kwargs)
     return decorated_function
 
-#   AUTH ROUTES (Login/Logout/Register)  
+
+#   AUTH ROUTES (Login/Logout/Register)
 
 @my_app.route('/api/register', methods=['POST'])
 def register():
     data = request.get_json()
 
-    if data is None or 'username' not in data or 'email' not in data or 'password' not in data:
+    required_fields = ['username', 'email', 'password']
+    if data is None or not all(field in data for field in required_fields):
         return jsonify({'error': 'Missing required fields in request'}), 400
 
     username_input = data['username']
@@ -157,16 +212,23 @@ def register():
     password_input = data['password']
 
     # Check if user already exists
-    existing_user_by_email = User.query.filter_by(user_email=email_input).first()
+    existing_user_by_email = User.query.filter_by(
+        user_email=email_input
+    ).first()
     if existing_user_by_email is not None:
         return jsonify({'error': 'Email is already registered'}), 400
 
-    existing_user_by_username = User.query.filter_by(username=username_input).first()
+    existing_user_by_username = User.query.filter_by(
+        username=username_input
+    ).first()
     if existing_user_by_username is not None:
-        return jsonify({'error': 'Username is already taken by someone else'}), 400
+        error_msg = 'Username is already taken by someone else'
+        return jsonify({'error': error_msg}), 400
 
     # Hash the password
-    hashed_password_safe = my_bcrypt_tool.generate_password_hash(password_input).decode('utf-8')
+    hashed_password_safe = my_bcrypt_tool.generate_password_hash(
+        password_input
+    ).decode('utf-8')
 
     # Create new user
     new_user = User(
@@ -188,6 +250,7 @@ def register():
         'user': new_user.to_dict()
     }), 201
 
+
 @my_app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -198,10 +261,21 @@ def login():
     login_email = data['email']
     login_password = data['password']
 
-    the_user_we_are_looking_for = User.query.filter_by(user_email=login_email).first()
+    the_user_we_are_looking_for = User.query.filter_by(
+        user_email=login_email
+    ).first()
 
-    if the_user_we_are_looking_for is None or not my_bcrypt_tool.check_password_hash(the_user_we_are_looking_for.password_hash_stored, login_password):
-        return jsonify({'error': 'Invalid email or password. Please try again.'}), 401
+    password_valid = (
+        the_user_we_are_looking_for is not None and
+        my_bcrypt_tool.check_password_hash(
+            the_user_we_are_looking_for.password_hash_stored,
+            login_password
+        )
+    )
+
+    if not password_valid:
+        error_msg = 'Invalid email or password. Please try again.'
+        return jsonify({'error': error_msg}), 401
 
     session['user_id'] = the_user_we_are_looking_for.user_id
     session.permanent = data.get('remember', False)
@@ -211,17 +285,21 @@ def login():
         'user': the_user_we_are_looking_for.to_dict()
     }), 200
 
+
 @my_app.route('/api/logout', methods=['POST'])
 def logout():
     session.pop('user_id', None)
     return jsonify({'message': 'You have been logged out!'}), 200
+
 
 @my_app.route('/api/current-user', methods=['GET'])
 @login_required
 def current_user():
     current_user_info = User.query.get(session['user_id'])
     return jsonify(current_user_info.to_dict()), 200
-#   POST ROUTES  
+
+
+#   POST ROUTES
 
 @my_app.route('/api/posts', methods=['GET'])
 def get_posts():
@@ -238,7 +316,9 @@ def get_posts():
             (Post.post_tags.contains(search_term))
         )
 
-    post_pages_object = the_query.order_by(Post.post_created_at.desc()).paginate(
+    post_pages_object = the_query.order_by(
+        Post.post_created_at.desc()
+    ).paginate(
         page=page_number, per_page=items_per_page, error_out=False
     )
 
@@ -253,10 +333,12 @@ def get_posts():
         'pages': post_pages_object.pages
     }), 200
 
+
 @my_app.route('/api/posts/<int:post_id>', methods=['GET'])
 def get_post(post_id):
     single_post = Post.query.get_or_404(post_id)
     return jsonify(single_post.to_dict()), 200
+
 
 @my_app.route('/api/posts', methods=['POST'])
 @login_required
@@ -281,13 +363,15 @@ def create_post():
         'post': new_post.to_dict()
     }), 201
 
+
 @my_app.route('/api/posts/<int:post_id>', methods=['PUT'])
 @login_required
 def update_post(post_id):
     post_to_edit = Post.query.get_or_404(post_id)
 
     if post_to_edit.author_id_fk != session['user_id']:
-        return jsonify({'error': 'Sorry, you can only edit your own posts'}), 403
+        error_msg = 'Sorry, you can only edit your own posts'
+        return jsonify({'error': error_msg}), 403
 
     data = request.get_json()
 
@@ -307,6 +391,7 @@ def update_post(post_id):
         'post': post_to_edit.to_dict()
     }), 200
 
+
 @my_app.route('/api/posts/<int:post_id>', methods=['DELETE'])
 @login_required
 def delete_post(post_id):
@@ -317,20 +402,26 @@ def delete_post(post_id):
     is_an_admin = current_user_object.is_user_admin
 
     if not is_author and not is_an_admin:
-        return jsonify({'error': 'You do not have permission to delete this post'}), 403
+        error_msg = 'You do not have permission to delete this post'
+        return jsonify({'error': error_msg}), 403
 
     db_object.session.delete(post_to_delete)
     db_object.session.commit()
 
     return jsonify({'message': 'Post deleted successfully and permanently'}), 200
-#   COMMENT ROUTES  
+
+
+#   COMMENT ROUTES
 
 @my_app.route('/api/posts/<int:post_id>/comments', methods=['GET'])
 def get_comments(post_id):
     Post.query.get_or_404(post_id)
-    comments_list = Comment.query.filter_by(post_id_fk=post_id).order_by(Comment.comment_created_at.desc()).all()
+    comments_list = Comment.query.filter_by(
+        post_id_fk=post_id
+    ).order_by(Comment.comment_created_at.desc()).all()
     comment_dict_list = [comment.to_dict() for comment in comments_list]
     return jsonify(comment_dict_list), 200
+
 
 @my_app.route('/api/posts/<int:post_id>/comments', methods=['POST'])
 @login_required
@@ -355,6 +446,7 @@ def create_comment(post_id):
         'comment': new_comment.to_dict()
     }), 201
 
+
 @my_app.route('/api/comments/<int:comment_id>', methods=['DELETE'])
 @login_required
 def delete_comment(comment_id):
@@ -365,14 +457,16 @@ def delete_comment(comment_id):
     is_an_admin = current_user_object.is_user_admin
 
     if not is_comment_author and not is_an_admin:
-        return jsonify({'error': 'You can only delete your own comments or be an admin'}), 403
+        error_msg = 'You can only delete your own comments or be an admin'
+        return jsonify({'error': error_msg}), 403
 
     db_object.session.delete(comment_to_delete)
     db_object.session.commit()
 
     return jsonify({'message': 'Comment deleted'}), 200
 
-#   LIKE ROUTES  
+
+#   LIKE ROUTES
 
 @my_app.route('/api/posts/<int:post_id>/like', methods=['POST'])
 @login_required
@@ -404,8 +498,9 @@ def toggle_like(post_id):
             'liked': True,
             'like_count': new_like_count
         }), 201
-    
-#   ADMIN ROUTES  
+
+
+#   ADMIN ROUTES
 
 @my_app.route('/api/admin/users', methods=['GET'])
 @admin_required
@@ -414,6 +509,7 @@ def get_all_users():
     user_data_list = [user.to_dict() for user in all_the_users]
     return jsonify(user_data_list), 200
 
+
 @my_app.route('/api/admin/posts', methods=['GET'])
 @admin_required
 def get_all_posts_admin():
@@ -421,7 +517,8 @@ def get_all_posts_admin():
     post_data_list = [post.to_dict() for post in all_the_posts]
     return jsonify(post_data_list), 200
 
-#   INITIALIZE DATABASE  
+
+#   INITIALIZE DATABASE
 
 @my_app.route('/api/init-db', methods=['POST'])
 def init_database():
@@ -433,11 +530,15 @@ def init_database():
         # Get admin credentials from environment variables
         default_admin_email = os.getenv('ADMIN_EMAIL', 'admin@thehub.com')
         admin_default_password = os.getenv('ADMIN_PASSWORD', 'admin123')
-        
-        admin_check = User.query.filter_by(user_email=default_admin_email).first()
+
+        admin_check = User.query.filter_by(
+            user_email=default_admin_email
+        ).first()
 
         if admin_check is None:
-            hashed_admin_password = my_bcrypt_tool.generate_password_hash(admin_default_password).decode('utf-8')
+            hashed_admin_password = my_bcrypt_tool.generate_password_hash(
+                admin_default_password
+            ).decode('utf-8')
 
             new_admin_user = User(
                 username='admin',
@@ -450,7 +551,8 @@ def init_database():
             print("Default admin user created!")
 
         return jsonify({
-            'message': 'Database tables are created and default admin is checked/created!',
+            'message': 'Database tables are created and default admin is '
+                       'checked/created!',
             'admin_credentials': {
                 'email': default_admin_email,
                 'password': '***hidden***',
@@ -462,11 +564,12 @@ def init_database():
         return jsonify({'error': 'Database setup failed: ' + str(e)}), 500
 
 
-#   SERVE HTML PAGES  
+#   SERVE HTML PAGES
 
 @my_app.route('/')
 def index():
     return render_template('index.html')
+
 
 @my_app.route('/<path:path>')
 def serve_page(path):
@@ -474,7 +577,8 @@ def serve_page(path):
         return render_template(path)
     return my_app.send_static_file(path)
 
-#  RUN APP  
+
+#  RUN APP
 
 if __name__ == '__main__':
     with my_app.app_context():
